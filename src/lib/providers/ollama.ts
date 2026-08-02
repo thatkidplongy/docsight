@@ -3,9 +3,14 @@ import type { CompletionRequest, CompletionResult, Provider } from './provider';
 const DEFAULT_BASE_URL = 'http://localhost:11434';
 const DEFAULT_MODEL = 'qwen3:4b';
 
-interface OllamaChatResponse {
-  model: string;
-  message?: { content: string };
+/** Bounds a runaway generation; thinking plus a JSON answer fits well within this. */
+const MAX_OUTPUT_TOKENS = 3072;
+
+interface OllamaStreamChunk {
+  model?: string;
+  message?: { content?: string };
+  done?: boolean;
+  error?: string;
 }
 
 export class OllamaProvider implements Provider {
@@ -22,6 +27,12 @@ export class OllamaProvider implements Provider {
     this.name = `ollama/${this.model}`;
   }
 
+  /**
+   * Streamed on purpose: undici (Node fetch) times out any response whose
+   * headers or body sit idle for 300s, and a thinking model can easily exceed
+   * that before its first byte of a non streamed reply. With streaming the
+   * connection carries tokens continuously, so long generations survive.
+   */
   async complete(request: CompletionRequest): Promise<CompletionResult> {
     const response = await fetch(`${this.baseUrl}/api/chat`, {
       method: 'POST',
@@ -29,25 +40,61 @@ export class OllamaProvider implements Provider {
       body: JSON.stringify({
         model: this.model,
         messages: request.messages,
-        stream: false,
+        stream: true,
         // Ollama defaults to a 4096 token context; six retrieved passages
         // plus thinking plus the answer need more headroom than that.
-        options: { temperature: request.temperature ?? 0, num_ctx: 8192 },
+        options: {
+          temperature: request.temperature ?? 0,
+          num_ctx: 8192,
+          num_predict: MAX_OUTPUT_TOKENS,
+        },
         ...(request.jsonSchema ? { format: request.jsonSchema } : {}),
         ...(this.think === undefined ? {} : { think: this.think }),
       }),
     });
 
-    if (!response.ok) {
+    if (!response.ok || !response.body) {
       throw new Error(`Ollama request failed: ${response.status} ${response.statusText}`);
     }
 
-    const data = (await response.json()) as OllamaChatResponse;
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let buffered = '';
+    let text = '';
+    let model = this.model;
 
-    if (!data.message) {
-      throw new Error('Ollama returned no message in its response');
+    const consumeLine = (line: string): void => {
+      if (!line.trim()) return;
+
+      const chunk = JSON.parse(line) as OllamaStreamChunk;
+
+      if (chunk.error) {
+        throw new Error(`Ollama error: ${chunk.error}`);
+      }
+
+      text += chunk.message?.content ?? '';
+
+      if (chunk.model) model = chunk.model;
+    };
+
+    for (;;) {
+      const { done, value } = await reader.read();
+
+      if (done) break;
+
+      buffered += decoder.decode(value, { stream: true });
+      const lines = buffered.split('\n');
+      buffered = lines.pop() ?? '';
+
+      for (const line of lines) consumeLine(line);
     }
 
-    return { text: data.message.content, model: data.model };
+    consumeLine(buffered);
+
+    if (!text) {
+      throw new Error('Ollama returned no content');
+    }
+
+    return { text, model };
   }
 }
