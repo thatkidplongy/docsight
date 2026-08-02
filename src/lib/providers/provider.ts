@@ -6,6 +6,8 @@ export interface ChatMessage {
 export interface CompletionRequest {
   messages: ChatMessage[];
   temperature?: number;
+  /** JSON schema the reply must conform to; providers map this to their native structured output. */
+  jsonSchema?: Record<string, unknown>;
 }
 
 export interface CompletionResult {

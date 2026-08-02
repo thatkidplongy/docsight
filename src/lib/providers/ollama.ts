@@ -12,10 +12,13 @@ export class OllamaProvider implements Provider {
   readonly name: string;
   private readonly baseUrl: string;
   private readonly model: string;
+  private readonly think: boolean | undefined;
 
-  constructor(options: { model?: string; baseUrl?: string } = {}) {
+  constructor(options: { model?: string; baseUrl?: string; think?: boolean } = {}) {
     this.model = options.model ?? DEFAULT_MODEL;
     this.baseUrl = options.baseUrl ?? DEFAULT_BASE_URL;
+    // Only sent when set: passing think to a model without thinking support errors.
+    this.think = options.think;
     this.name = `ollama/${this.model}`;
   }
 
@@ -28,6 +31,8 @@ export class OllamaProvider implements Provider {
         messages: request.messages,
         stream: false,
         options: { temperature: request.temperature ?? 0 },
+        ...(request.jsonSchema ? { format: request.jsonSchema } : {}),
+        ...(this.think === undefined ? {} : { think: this.think }),
       }),
     });
 

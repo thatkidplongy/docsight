@@ -14,8 +14,8 @@ import { buildChunks } from '../src/lib/pipeline/chunk';
 import { embedTexts } from '../src/lib/pipeline/embed';
 import { extractPages } from '../src/lib/pipeline/extract';
 
-const FILINGS_DIR = path.resolve('data/filings');
-const INDEX_DIR = path.resolve('data/index');
+const FILINGS_DIR = path.resolve('public/data/filings');
+const INDEX_DIR = path.resolve('public/data/index');
 const MANIFEST_PATH = path.join(INDEX_DIR, 'manifest.json');
 
 interface ManifestEntry {
