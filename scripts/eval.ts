@@ -99,7 +99,15 @@ const runEval = async (): Promise<void> => {
     console.log(`=== ${provider.name} ===`);
 
     for (const [position, item] of gold.entries()) {
-      const result = await evaluateQuestion(provider, item);
+      let result = await evaluateQuestion(provider, item);
+
+      // One retry absorbs transient failures (sampling noise, a looping
+      // generation) without letting a flaky question stall the whole run.
+      if (result.error) {
+        console.log(`[${provider.name}] retrying ${item.id} after: ${result.error}`);
+        result = await evaluateQuestion(provider, item);
+      }
+
       perQuestion.push(result);
 
       const status = result.error ? `ERROR ${result.error}` : result.correct ? 'correct' : 'wrong';

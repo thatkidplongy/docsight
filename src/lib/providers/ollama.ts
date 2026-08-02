@@ -4,7 +4,15 @@ const DEFAULT_BASE_URL = 'http://localhost:11434';
 const DEFAULT_MODEL = 'qwen3:4b';
 
 /** Bounds a runaway generation; thinking plus a JSON answer fits well within this. */
-const MAX_OUTPUT_TOKENS = 3072;
+const MAX_OUTPUT_TOKENS = 4096;
+
+/**
+ * Qwen's model card warns that greedy decoding makes thinking mode loop until
+ * the token budget is gone (observed: an eval question burned its whole
+ * budget on thinking and produced no answer). Their recommended thinking
+ * temperature is 0.6.
+ */
+const THINKING_TEMPERATURE = 0.6;
 
 interface OllamaStreamChunk {
   model?: string;
@@ -44,7 +52,7 @@ export class OllamaProvider implements Provider {
         // Ollama defaults to a 4096 token context; six retrieved passages
         // plus thinking plus the answer need more headroom than that.
         options: {
-          temperature: request.temperature ?? 0,
+          temperature: this.think && !request.temperature ? THINKING_TEMPERATURE : (request.temperature ?? 0),
           num_ctx: 8192,
           num_predict: MAX_OUTPUT_TOKENS,
         },
