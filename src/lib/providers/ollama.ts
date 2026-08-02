@@ -30,7 +30,9 @@ export class OllamaProvider implements Provider {
         model: this.model,
         messages: request.messages,
         stream: false,
-        options: { temperature: request.temperature ?? 0 },
+        // Ollama defaults to a 4096 token context; six retrieved passages
+        // plus thinking plus the answer need more headroom than that.
+        options: { temperature: request.temperature ?? 0, num_ctx: 8192 },
         ...(request.jsonSchema ? { format: request.jsonSchema } : {}),
         ...(this.think === undefined ? {} : { think: this.think }),
       }),

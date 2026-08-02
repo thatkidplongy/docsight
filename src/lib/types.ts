@@ -39,3 +39,14 @@ export interface Answer {
   /** True when the model correctly declined because the source does not contain the answer. */
   refused: boolean;
 }
+
+/** One ingested document as listed in public/data/index/manifest.json. */
+export interface ManifestEntry {
+  id: string;
+  ticker: string;
+  company: string;
+  form: string;
+  filingDate: string;
+  pages: number;
+  chunkCount: number;
+}
