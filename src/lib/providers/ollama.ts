@@ -3,8 +3,15 @@ import type { CompletionRequest, CompletionResult, Provider } from './provider';
 const DEFAULT_BASE_URL = 'http://localhost:11434';
 const DEFAULT_MODEL = 'qwen3:4b';
 
-/** Bounds a runaway generation; thinking plus a JSON answer fits well within this. */
-const MAX_OUTPUT_TOKENS = 4096;
+/**
+ * Output budgets, measured not guessed: qwen3's thinking alone runs ~2,700
+ * tokens on financial table questions, so thinking models get triple the
+ * budget of plain ones, plus the context to hold prompt and output together.
+ */
+const THINKING_OUTPUT_TOKENS = 6144;
+const PLAIN_OUTPUT_TOKENS = 2048;
+const THINKING_CONTEXT = 12288;
+const PLAIN_CONTEXT = 8192;
 
 /**
  * Qwen's model card warns that greedy decoding makes thinking mode loop until
@@ -53,8 +60,8 @@ export class OllamaProvider implements Provider {
         // plus thinking plus the answer need more headroom than that.
         options: {
           temperature: this.think && !request.temperature ? THINKING_TEMPERATURE : (request.temperature ?? 0),
-          num_ctx: 8192,
-          num_predict: MAX_OUTPUT_TOKENS,
+          num_ctx: this.think ? THINKING_CONTEXT : PLAIN_CONTEXT,
+          num_predict: this.think ? THINKING_OUTPUT_TOKENS : PLAIN_OUTPUT_TOKENS,
         },
         ...(request.jsonSchema ? { format: request.jsonSchema } : {}),
         ...(this.think === undefined ? {} : { think: this.think }),
