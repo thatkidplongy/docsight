@@ -21,6 +21,10 @@ precedence. Record repeated mistakes in `CLAUDE_GOTCHAS.md`.
 
 - `src/` — the web app (two routes: `/` demo, `/benchmark`). Deployed as a static site; retrieval
   runs in the browser over embedding files shipped from `data/`.
+- `src/lib/pipeline/` — extraction, chunking and embedding as environment agnostic code. Both the
+  ingest script (Node) and the browser uploader (phase 6 BYOK flow) call this shared pipeline;
+  pdf.js and transformers.js run in both environments. Never write pipeline logic directly in
+  `scripts/` — scripts are thin wrappers around `src/lib/pipeline/`.
 - `scripts/` — Node pipelines run locally via tsx. Never imported by the web app.
 - `data/` — filings, chunk index, embeddings, gold set, eval results. Generated artifacts; the
   deployable subset is committed so the site needs no backend.
@@ -40,6 +44,13 @@ precedence. Record repeated mistakes in `CLAUDE_GOTCHAS.md`.
 | 4     | Composed confidence scoring                                               | todo   |
 | 5     | Eval harness, gold set, benchmark page                                    | todo   |
 | 6     | Pre-computed demo answers, BYOK path, deploy                              | todo   |
+
+## Demo corpus
+
+Ten well known companies across sectors (user picked the first three): Apple, Nvidia, Tesla,
+Microsoft, Amazon, Disney, Netflix, Nike, McDonald's, JPMorgan. Latest 10-K each, fetched from
+SEC EDGAR. EDGAR requests must declare a User-Agent with contact info per SEC policy; use
+`DocSight fgclavano@gmail.com` (the address already public on the portfolio).
 
 ## Hard rules
 
