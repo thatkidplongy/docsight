@@ -14,8 +14,10 @@ precedence. Record repeated mistakes in `CLAUDE_GOTCHAS.md`.
 - `npm run test` — Vitest, colocated `*.test.ts` files under src/
 - `npm run lint` / `npm run format` — oxlint / Prettier
 - `npm run smoke` — round trip against local Ollama (`brew services start ollama` if down)
-- `npm run ingest` — phase 1 pipeline (filings → chunks with coordinates → embeddings → data/)
-- `npm run eval` — phase 5 harness (gold set → per model scores → data/results/)
+- `npm run ingest` — pipeline (filings → chunks with coordinates → embeddings → public/data/)
+- `npm run ask -- AAPL "..."` — grounded Q&A against one filing from the terminal
+- `npm run eval` — gold set → per model scores → public/data/results/results.json
+- `npm run precompute` — suggested demo answers → public/data/demo/
 
 ## Architecture
 
@@ -39,11 +41,11 @@ precedence. Record repeated mistakes in `CLAUDE_GOTCHAS.md`.
 | ----- | ------------------------------------------------------------------------- | ------ |
 | 0     | Scaffold, provider interface, Ollama smoke test                           | done   |
 | 1     | Ingestion: pdf.js extraction with coordinates, chunking, local embeddings | done   |
-| 2     | Q&A core: retrieve → prompt → structured answer with quoted spans         | todo   |
-| 3     | Span verification + PDF viewer with citation highlighting                 | todo   |
-| 4     | Composed confidence scoring                                               | todo   |
-| 5     | Eval harness, gold set, benchmark page                                    | todo   |
-| 6     | Pre-computed demo answers, BYOK path, deploy                              | todo   |
+| 2     | Q&A core: retrieve → prompt → structured answer with quoted spans         | done   |
+| 3     | Span verification + PDF viewer with citation highlighting                 | done   |
+| 4     | Composed confidence scoring                                               | done   |
+| 5     | Eval harness, gold set, benchmark page                                    | done   |
+| 6     | Pre-computed demo answers, BYOK path, deploy                              | done   |
 
 ## Demo corpus
 

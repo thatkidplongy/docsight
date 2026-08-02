@@ -1,0 +1,60 @@
+[
+  { "id": "aapl-1", "documentId": "aapl", "question": "What were Apple's total net sales in fiscal 2025?", "expected": ["416,161", "416.2 billion", "416 billion"], "refusalExpected": false },
+  { "id": "aapl-2", "documentId": "aapl", "question": "What was Apple's net income in fiscal 2025?", "expected": ["112,010", "112 billion"], "refusalExpected": false },
+  { "id": "aapl-3", "documentId": "aapl", "question": "How much did Apple spend on research and development in fiscal 2025?", "expected": ["34,550", "34.55 billion", "34.6 billion"], "refusalExpected": false },
+  { "id": "aapl-4", "documentId": "aapl", "question": "What was Apple's basic earnings per share in fiscal 2025?", "expected": ["7.49"], "refusalExpected": false },
+  { "id": "aapl-u", "documentId": "aapl", "question": "How many employees does Apple have in Brazil?", "refusalExpected": true },
+
+  { "id": "nvda-1", "documentId": "nvda", "question": "What was Nvidia's revenue in fiscal 2026?", "expected": ["215,938", "215.9 billion", "216 billion"], "refusalExpected": false },
+  { "id": "nvda-2", "documentId": "nvda", "question": "What was Nvidia's net income in fiscal 2026?", "expected": ["120,067", "120.1 billion", "120 billion"], "refusalExpected": false },
+  { "id": "nvda-3", "documentId": "nvda", "question": "What was Nvidia's net income per diluted share in fiscal 2026?", "expected": ["4.90"], "refusalExpected": false },
+  { "id": "nvda-4", "documentId": "nvda", "question": "What was Nvidia's gross margin percentage in fiscal 2026?", "expected": ["71.1"], "refusalExpected": false },
+  { "id": "nvda-u", "documentId": "nvda", "question": "How many H100 GPUs did Nvidia sell in fiscal 2026?", "refusalExpected": true },
+
+  { "id": "tsla-1", "documentId": "tsla", "question": "What were Tesla's total revenues in 2025?", "expected": ["94,827", "94.8 billion", "95 billion"], "refusalExpected": false },
+  { "id": "tsla-2", "documentId": "tsla", "question": "What were Tesla's total revenues in 2024?", "expected": ["97,690", "97.7 billion"], "refusalExpected": false },
+  { "id": "tsla-3", "documentId": "tsla", "question": "How much did Tesla spend on research and development in 2025?", "expected": ["6,411", "6.4 billion"], "refusalExpected": false },
+  { "id": "tsla-4", "documentId": "tsla", "question": "What was Tesla's net income in 2025?", "expected": ["3,855", "3.9 billion"], "refusalExpected": false },
+  { "id": "tsla-u", "documentId": "tsla", "question": "How many vehicles does Tesla forecast producing in 2027?", "refusalExpected": true },
+
+  { "id": "msft-1", "documentId": "msft", "question": "What was Microsoft's total revenue in fiscal 2026?", "expected": ["331,839", "331.8 billion", "332 billion"], "refusalExpected": false },
+  { "id": "msft-2", "documentId": "msft", "question": "What was Microsoft's net income in fiscal 2026?", "expected": ["133,749", "133.7 billion", "134 billion"], "refusalExpected": false },
+  { "id": "msft-3", "documentId": "msft", "question": "How much did Microsoft spend on research and development in fiscal 2026?", "expected": ["35,562", "35.6 billion"], "refusalExpected": false },
+  { "id": "msft-4", "documentId": "msft", "question": "By what percentage did Microsoft's net income grow in fiscal 2026?", "expected": ["31"], "refusalExpected": false },
+  { "id": "msft-u", "documentId": "msft", "question": "How many servers does Microsoft Azure operate worldwide?", "refusalExpected": true },
+
+  { "id": "amzn-1", "documentId": "amzn", "question": "What were Amazon's total net sales in 2025?", "expected": ["716,924", "716.9 billion", "717 billion"], "refusalExpected": false },
+  { "id": "amzn-2", "documentId": "amzn", "question": "What was Amazon's net income in 2025?", "expected": ["77,670", "77.7 billion", "78 billion"], "refusalExpected": false },
+  { "id": "amzn-3", "documentId": "amzn", "question": "How much did Amazon spend on technology and infrastructure in 2025?", "expected": ["108,521", "108.5 billion"], "refusalExpected": false },
+  { "id": "amzn-4", "documentId": "amzn", "question": "What were Amazon's total net sales in 2023?", "expected": ["574,785", "574.8 billion", "575 billion"], "refusalExpected": false },
+  { "id": "amzn-u", "documentId": "amzn", "question": "How many Prime members does Amazon have in the Philippines?", "refusalExpected": true },
+
+  { "id": "dis-1", "documentId": "dis", "question": "What were Disney's total revenues in fiscal 2025?", "expected": ["94,425", "94.4 billion"], "refusalExpected": false },
+  { "id": "dis-2", "documentId": "dis", "question": "What was Disney's net income in fiscal 2025?", "expected": ["13,431", "13.4 billion"], "refusalExpected": false },
+  { "id": "dis-3", "documentId": "dis", "question": "What were Disney's total revenues in fiscal 2024?", "expected": ["91,361", "91.4 billion"], "refusalExpected": false },
+  { "id": "dis-4", "documentId": "dis", "question": "What was Disney's net income in fiscal 2024?", "expected": ["5,773", "5.8 billion"], "refusalExpected": false },
+  { "id": "dis-u", "documentId": "dis", "question": "What is the price of a one day ticket at Disneyland Paris?", "refusalExpected": true },
+
+  { "id": "nflx-1", "documentId": "nflx", "question": "What were Netflix's total revenues in 2025?", "expected": ["45,183,036", "45,183", "45.2 billion"], "refusalExpected": false },
+  { "id": "nflx-2", "documentId": "nflx", "question": "What was Netflix's net income in 2025?", "expected": ["10,981,201", "10,981", "11.0 billion", "11 billion"], "refusalExpected": false },
+  { "id": "nflx-3", "documentId": "nflx", "question": "What were Netflix's total revenues in 2024?", "expected": ["39,000,966", "39,001", "39.0 billion", "39 billion"], "refusalExpected": false },
+  { "id": "nflx-4", "documentId": "nflx", "question": "By what percentage did Netflix's total revenues grow in 2025?", "expected": ["16"], "refusalExpected": false },
+  { "id": "nflx-u", "documentId": "nflx", "question": "How many subscribers does Netflix have in the Philippines?", "refusalExpected": true },
+
+  { "id": "nke-1", "documentId": "nke", "question": "What was Nike's net income in fiscal 2026?", "expected": ["3,108", "3.1 billion"], "refusalExpected": false },
+  { "id": "nke-2", "documentId": "nke", "question": "What was Nike's net income in fiscal 2025?", "expected": ["3,219", "3.2 billion"], "refusalExpected": false },
+  { "id": "nke-3", "documentId": "nke", "question": "What was Nike's demand creation expense in fiscal 2026?", "expected": ["4,754", "4.8 billion"], "refusalExpected": false },
+  { "id": "nke-4", "documentId": "nke", "question": "What was Nike's operating overhead expense in fiscal 2026?", "expected": ["11,360", "11.4 billion"], "refusalExpected": false },
+  { "id": "nke-u", "documentId": "nke", "question": "How many pairs of shoes did Nike sell in fiscal 2026?", "refusalExpected": true },
+
+  { "id": "mcd-1", "documentId": "mcd", "question": "What were McDonald's total revenues in 2025?", "expected": ["26,885", "26.9 billion", "27 billion"], "refusalExpected": false },
+  { "id": "mcd-2", "documentId": "mcd", "question": "What was McDonald's net income in 2025?", "expected": ["8,563", "8.6 billion"], "refusalExpected": false },
+  { "id": "mcd-3", "documentId": "mcd", "question": "What was McDonald's net income in 2024?", "expected": ["8,223", "8.2 billion"], "refusalExpected": false },
+  { "id": "mcd-u", "documentId": "mcd", "question": "What is the average hourly wage of McDonald's crew members in the United States?", "refusalExpected": true },
+
+  { "id": "jpm-1", "documentId": "jpm", "question": "What was JPMorgan's total net revenue on a managed basis in 2025?", "expected": ["182,447", "182.4 billion"], "refusalExpected": false },
+  { "id": "jpm-2", "documentId": "jpm", "question": "What was JPMorgan's net income in 2025?", "expected": ["57,048", "57.0 billion", "57 billion"], "refusalExpected": false },
+  { "id": "jpm-3", "documentId": "jpm", "question": "What was JPMorgan's net income in 2024?", "expected": ["58,471", "58.5 billion"], "refusalExpected": false },
+  { "id": "jpm-4", "documentId": "jpm", "question": "What was JPMorgan's total noninterest expense in 2025?", "expected": ["95,640", "95.6 billion"], "refusalExpected": false },
+  { "id": "jpm-u", "documentId": "jpm", "question": "What was JPMorgan's revenue from cryptocurrency trading in 2025?", "refusalExpected": true }
+]

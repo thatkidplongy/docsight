@@ -14,6 +14,7 @@
     "smoke": "tsx scripts/smoke-ollama.ts",
     "ask": "tsx scripts/ask.ts",
     "ingest": "tsx scripts/ingest.ts",
+    "precompute": "tsx scripts/precompute.ts",
     "eval": "tsx scripts/eval.ts",
     "preview": "vite preview"
   },
