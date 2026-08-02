@@ -38,7 +38,7 @@ precedence. Record repeated mistakes in `CLAUDE_GOTCHAS.md`.
 | Phase | Scope                                                                     | Status |
 | ----- | ------------------------------------------------------------------------- | ------ |
 | 0     | Scaffold, provider interface, Ollama smoke test                           | done   |
-| 1     | Ingestion: pdf.js extraction with coordinates, chunking, local embeddings | todo   |
+| 1     | Ingestion: pdf.js extraction with coordinates, chunking, local embeddings | done   |
 | 2     | Q&A core: retrieve → prompt → structured answer with quoted spans         | todo   |
 | 3     | Span verification + PDF viewer with citation highlighting                 | todo   |
 | 4     | Composed confidence scoring                                               | todo   |

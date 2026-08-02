@@ -1,0 +1,92 @@
+[
+  {
+    "id": "aapl",
+    "ticker": "AAPL",
+    "company": "Apple",
+    "form": "10-K",
+    "filingDate": "2025-10-31",
+    "pages": 85,
+    "chunkCount": 246
+  },
+  {
+    "id": "nvda",
+    "ticker": "NVDA",
+    "company": "Nvidia",
+    "form": "10-K",
+    "filingDate": "2026-02-25",
+    "pages": 133,
+    "chunkCount": 398
+  },
+  {
+    "id": "tsla",
+    "ticker": "TSLA",
+    "company": "Tesla",
+    "form": "10-K",
+    "filingDate": "2026-01-29",
+    "pages": 172,
+    "chunkCount": 482
+  },
+  {
+    "id": "msft",
+    "ticker": "MSFT",
+    "company": "Microsoft",
+    "form": "10-K",
+    "filingDate": "2026-07-29",
+    "pages": 156,
+    "chunkCount": 400
+  },
+  {
+    "id": "amzn",
+    "ticker": "AMZN",
+    "company": "Amazon",
+    "form": "10-K",
+    "filingDate": "2026-02-06",
+    "pages": 125,
+    "chunkCount": 344
+  },
+  {
+    "id": "dis",
+    "ticker": "DIS",
+    "company": "Disney",
+    "form": "10-K",
+    "filingDate": "2025-11-13",
+    "pages": 210,
+    "chunkCount": 550
+  },
+  {
+    "id": "nflx",
+    "ticker": "NFLX",
+    "company": "Netflix",
+    "form": "10-K",
+    "filingDate": "2026-01-23",
+    "pages": 109,
+    "chunkCount": 324
+  },
+  {
+    "id": "nke",
+    "ticker": "NKE",
+    "company": "Nike",
+    "form": "10-K",
+    "filingDate": "2026-07-15",
+    "pages": 151,
+    "chunkCount": 425
+  },
+  {
+    "id": "mcd",
+    "ticker": "MCD",
+    "company": "McDonald's",
+    "form": "10-K",
+    "filingDate": "2026-02-24",
+    "pages": 93,
+    "chunkCount": 310
+  },
+  {
+    "id": "jpm",
+    "ticker": "JPM",
+    "company": "JPMorgan Chase",
+    "form": "10-K",
+    "filingDate": "2026-02-13",
+    "pages": 562,
+    "chunkCount": 1464
+  }
+]
