@@ -27,6 +27,15 @@ attributable to Disney $ 12,404`. The gold label only accepted the first, so the
 interests has this split. When adding gold questions, name the exact line item rather than a
 colloquial label, and check whether the statement reports more than one variant of the figure.
 
+## Prior year figures can retrieve from the wrong table
+
+Disney's fiscal 2024 revenue (91,361) appears in six chunks, but a query for it ranks a segment
+breakdown table (`$ 41,186 ... $ 91,361`) at position 4 while the two chunks stating
+`Total revenues 94,425 91,361 3 %` fall outside the top 6. The figure reaches the model in its least
+legible form, so two of three models misread it. Diagnose this class of failure by checking whether
+the answer bearing chunk was retrieved at all before blaming the model: the script pattern is in the
+project history, and the answer is usually "retrieved, but the wrong instance of it".
+
 ## Thinking models need streaming, temperature, and budget headroom
 
 Three separate failures with the same symptom (empty or dead responses from qwen3):

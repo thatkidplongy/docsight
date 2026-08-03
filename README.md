@@ -226,29 +226,41 @@ model changes.
 
 | Model       | Accuracy | Correct refusals | Verified citations | Avg time |
 | ----------- | -------- | ---------------- | ------------------ | -------- |
-| qwen3:4b    | **87%**  | 100%             | **92%**            | 177.5s   |
-| gemma3:4b   | 79%      | 100%             | 59%                | 13.4s    |
-| llama3.2:3b | 77%      | 90%              | 46%                | 5.7s     |
+| qwen3:4b    | **92%**  | 100%             | **92%**            | 186.5s   |
+| gemma3:4b   | 82%      | 100%             | 59%                | 14.1s    |
+| llama3.2:3b | 79%      | 90%              | 44%                | 5.5s     |
 
 **Read the citation column, not the accuracy column.** Accuracy across the three models is fairly
-close, between 77% and 87%. But the rate at which their quoted sentences survive verification ranges
-from 46% to 92%.
+close, between 79% and 92%. But the rate at which their quoted sentences survive verification ranges
+from 44% to 92%.
 
 That gap is the whole point of this project. The weaker models frequently produced **the right
 answer while citing a sentence they had invented.** Judged on answers alone they look acceptable.
 Judged on whether they can prove their answers, they fall apart. A tool that only measured accuracy
 would have called them good enough.
 
-**These numbers predate a gold set correction and understate Disney.** Two of the four Disney
-questions asked for "net income" when the income statement reports two different figures: total net
-income including noncontrolling interests, and net income attributable to Disney. The models
-answered with the attributable figure, correctly cited, and my label only accepted the other one.
-The questions are now specific about which line item they want, so a rerun should score higher than
-the table shows. The lesson is recorded in [`CLAUDE_GOTCHAS.md`](CLAUDE_GOTCHAS.md).
+### What the eval caught in its own author
 
-That mistake is itself the argument for building the eval. Without a gold set to disagree with, an
-ambiguous question just produces a confident wrong looking answer and nobody notices which side the
-error is on.
+An earlier run scored Disney far worse, and I wrote that up as a chunking weakness. It was not. Two
+Disney questions asked for "net income" when the income statement reports two different figures:
+total net income including noncontrolling interests, and net income attributable to Disney. The
+models answered with the attributable figure and cited it correctly. **My label was wrong, and the
+models were right.** Naming the exact line item lifted qwen3 from 87% to 92%.
+
+Without a gold set to disagree with, an ambiguous question just yields a confident answer and nobody
+notices which side the mistake is on. Building the eval is what surfaced my own error, which is a
+better argument for evals than any number in the table.
+
+### The one remaining consistent failure
+
+Asked for Disney's fiscal 2024 revenue, two of three models get it wrong. Diagnosing it separated
+retrieval from reasoning: the answer is technically retrieved, at rank 4, but the passage it arrives
+in is a **segment breakdown table** reading `$ 41,186 $ 17,619 $ 34,151 $ (1,595) $ 91,361`. The two
+passages that state it plainly as `Total revenues 94,425 91,361 3 %` rank outside the top 6.
+
+So the number reaches the model in its least legible form. That is a retrieval ranking problem, not
+a model problem, and the fix belongs in chunking or ranking rather than in prompting. It is the
+clearest next piece of work.
 
 Latency reflects a laptop running local models, not a datacenter.
 
@@ -379,10 +391,10 @@ a thinking model can return nothing at all. Those notes are more useful than a c
 ## Honest limitations
 
 - **Ten documents, one document type.** All are SEC 10-K filings. Other formats are untested.
-- **The published benchmark predates a gold set fix.** Two Disney labels were ambiguous, so the
-  table understates accuracy until the eval is rerun.
-- **Gold labels are hand written and can be wrong.** One ambiguity was already found and corrected.
-  Forty nine questions is a small enough set that others may remain.
+- **Gold labels are hand written and can be wrong.** Two ambiguous ones were already found and
+  corrected. Forty nine questions is a small enough set that others may remain.
+- **Ranking prefers the wrong table sometimes.** Prior year figures in multi year statements can
+  surface from a segment breakdown rather than the income statement, as documented above.
 - **Highlights cover the passage, not the sentence.** The box surrounds the region the passage came
   from, which is precise enough to find the source instantly but is not a word level highlight.
 - **The gold set is 49 questions.** Enough to expose the citation gap between models, not enough for
