@@ -1,9 +1,4 @@
-import type { Answer } from '../../lib/types';
-
-export interface DemoItem {
-  question: string;
-  answer: Answer;
-}
+import type { DemoItem } from '../../lib/types';
 
 interface SuggestedQuestionsProps {
   items: DemoItem[];

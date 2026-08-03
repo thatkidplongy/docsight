@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { matchesExpected, summarizeModel, type GoldItem, type QuestionResult } from './score';
+import type { GoldItem, QuestionResult } from '../types';
+import { matchesExpected, summarizeModel } from './score';
 
 describe('matchesExpected', () => {
   it('matches a table figure inside a sentence', () => {
@@ -17,6 +18,10 @@ describe('matchesExpected', () => {
   it('rejects an answer with the wrong figure', () => {
     expect(matchesExpected('R&D expense was $31,370 million', ['34,550'])).toBe(false);
   });
+
+  it('rejects when there are no expected variants', () => {
+    expect(matchesExpected('anything at all', [])).toBe(false);
+  });
 });
 
 describe('summarizeModel', () => {
@@ -26,42 +31,46 @@ describe('summarizeModel', () => {
     { id: 'p1', documentId: 'aapl', question: 'c', refusalExpected: true },
   ];
 
-  const perQuestion: QuestionResult[] = [
-    {
-      id: 'q1',
-      documentId: 'aapl',
-      correct: true,
-      refused: false,
-      citationValid: true,
-      confidence: 0.8,
-      latencyMs: 100,
-    },
-    {
-      id: 'q2',
-      documentId: 'aapl',
-      correct: false,
-      refused: false,
-      citationValid: false,
-      confidence: 0.4,
-      latencyMs: 200,
-    },
-    {
-      id: 'p1',
-      documentId: 'aapl',
-      correct: true,
-      refused: true,
-      citationValid: false,
-      confidence: 0.3,
-      latencyMs: 300,
-    },
-  ];
+  const buildResult = (id: string, overrides: Partial<QuestionResult> = {}): QuestionResult => ({
+    id,
+    documentId: 'aapl',
+    correct: false,
+    refused: false,
+    citationValid: false,
+    confidence: 0,
+    latencyMs: 0,
+    ...overrides,
+  });
 
   it('separates accuracy, refusal accuracy and citation rate', () => {
-    const summary = summarizeModel('test/model', gold, perQuestion);
+    const summary = summarizeModel('test/model', gold, [
+      buildResult('q1', { correct: true, citationValid: true, confidence: 0.8, latencyMs: 100 }),
+      buildResult('q2', { confidence: 0.4, latencyMs: 200 }),
+      buildResult('p1', { correct: true, refused: true, confidence: 0.3, latencyMs: 300 }),
+    ]);
 
     expect(summary.accuracy).toBe(0.5);
     expect(summary.refusalAccuracy).toBe(1);
     expect(summary.citationRate).toBe(0.5);
     expect(summary.avgLatencyMs).toBe(200);
+  });
+
+  it('excludes errored answers from the citation denominator', () => {
+    const summary = summarizeModel('test/model', gold, [
+      buildResult('q1', { correct: true, citationValid: true }),
+      buildResult('q2', { error: 'boom' }),
+      buildResult('p1', { correct: true, refused: true }),
+    ]);
+
+    // Only q1 counts as answered, and it cited correctly.
+    expect(summary.citationRate).toBe(1);
+  });
+
+  it('returns zeroes rather than NaN for an empty run', () => {
+    const summary = summarizeModel('test/model', gold, []);
+
+    expect(summary.accuracy).toBe(0);
+    expect(summary.citationRate).toBe(0);
+    expect(summary.avgLatencyMs).toBe(0);
   });
 });

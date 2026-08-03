@@ -3,23 +3,43 @@ import type { CompletionRequest, CompletionResult, Provider } from './provider';
 const DEFAULT_BASE_URL = 'http://localhost:11434';
 const DEFAULT_MODEL = 'qwen3:4b';
 
-/**
- * Output budgets, measured not guessed: qwen3's thinking alone runs ~2,700
- * tokens on financial table questions, so thinking models get triple the
- * budget of plain ones, plus the context to hold prompt and output together.
- */
-const THINKING_OUTPUT_TOKENS = 6144;
-const PLAIN_OUTPUT_TOKENS = 2048;
-const THINKING_CONTEXT = 12288;
-const PLAIN_CONTEXT = 8192;
+interface ModelCapabilities {
+  /** Whether the model supports a thinking phase; sending think to one that does not errors. */
+  think: boolean;
+  /**
+   * Default sampling temperature. Qwen documents 0.6 for thinking mode because
+   * greedy decoding makes its thinking loop until the token budget is gone.
+   */
+  temperature: number;
+  contextTokens: number;
+  /** Thinking measures ~2,700 tokens on financial questions, so budgets are sized to that. */
+  outputTokens: number;
+}
+
+const THINKING_CAPABILITIES: ModelCapabilities = {
+  think: true,
+  temperature: 0.6,
+  contextTokens: 12288,
+  outputTokens: 6144,
+};
+
+const PLAIN_CAPABILITIES: ModelCapabilities = {
+  think: false,
+  temperature: 0,
+  contextTokens: 8192,
+  outputTokens: 2048,
+};
 
 /**
- * Qwen's model card warns that greedy decoding makes thinking mode loop until
- * the token budget is gone (observed: an eval question burned its whole
- * budget on thinking and produced no answer). Their recommended thinking
- * temperature is 0.6.
+ * Which models think is a property of the model, not a decision for each call
+ * site. Keeping it here means a caller can switch models without knowing, and
+ * the default model can change without silently breaking every script.
  */
-const THINKING_TEMPERATURE = 0.6;
+const CAPABILITIES_BY_MODEL: Record<string, ModelCapabilities> = {
+  'qwen3:4b': THINKING_CAPABILITIES,
+};
+
+const resolveCapabilities = (model: string): ModelCapabilities => CAPABILITIES_BY_MODEL[model] ?? PLAIN_CAPABILITIES;
 
 interface OllamaStreamChunk {
   model?: string;
@@ -32,13 +52,12 @@ export class OllamaProvider implements Provider {
   readonly name: string;
   private readonly baseUrl: string;
   private readonly model: string;
-  private readonly think: boolean | undefined;
+  private readonly capabilities: ModelCapabilities;
 
-  constructor(options: { model?: string; baseUrl?: string; think?: boolean } = {}) {
+  constructor(options: { model?: string; baseUrl?: string } = {}) {
     this.model = options.model ?? DEFAULT_MODEL;
     this.baseUrl = options.baseUrl ?? DEFAULT_BASE_URL;
-    // Only sent when set: passing think to a model without thinking support errors.
-    this.think = options.think;
+    this.capabilities = resolveCapabilities(this.model);
     this.name = `ollama/${this.model}`;
   }
 
@@ -56,15 +75,13 @@ export class OllamaProvider implements Provider {
         model: this.model,
         messages: request.messages,
         stream: true,
-        // Ollama defaults to a 4096 token context; six retrieved passages
-        // plus thinking plus the answer need more headroom than that.
+        think: this.capabilities.think,
         options: {
-          temperature: this.think && !request.temperature ? THINKING_TEMPERATURE : (request.temperature ?? 0),
-          num_ctx: this.think ? THINKING_CONTEXT : PLAIN_CONTEXT,
-          num_predict: this.think ? THINKING_OUTPUT_TOKENS : PLAIN_OUTPUT_TOKENS,
+          temperature: request.temperature ?? this.capabilities.temperature,
+          num_ctx: this.capabilities.contextTokens,
+          num_predict: this.capabilities.outputTokens,
         },
         ...(request.jsonSchema ? { format: request.jsonSchema } : {}),
-        ...(this.think === undefined ? {} : { think: this.think }),
       }),
     });
 
@@ -72,7 +89,11 @@ export class OllamaProvider implements Provider {
       throw new Error(`Ollama request failed: ${response.status} ${response.statusText}`);
     }
 
-    const reader = response.body.getReader();
+    return await this.readStream(response.body);
+  }
+
+  private async readStream(body: ReadableStream<Uint8Array>): Promise<CompletionResult> {
+    const reader = body.getReader();
     const decoder = new TextDecoder();
     let buffered = '';
     let text = '';

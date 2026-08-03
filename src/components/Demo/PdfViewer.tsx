@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import type { PDFDocumentProxy, RenderTask } from 'pdfjs-dist';
 import type { Bbox } from '../../lib/pipeline/geometry';
 import { loadFilingPdf } from '../../lib/pdf/loader';
+import { ErrorState, LoadingSkeleton } from './states';
 
 interface PdfViewerProps {
   documentId: string;
@@ -17,37 +18,77 @@ interface HighlightRect {
   height: number;
 }
 
+interface PdfState {
+  pdf: PDFDocumentProxy | null;
+  error: string | null;
+}
+
+const LOADING: PdfState = { pdf: null, error: null };
+
 /** Maps a PDF user space point through the viewport matrix into CSS pixels. */
 const applyViewportTransform = (transform: number[], x: number, y: number): [number, number] => [
   transform[0] * x + transform[2] * y + transform[4],
   transform[1] * x + transform[3] * y + transform[5],
 ];
 
+const PageControls = ({
+  page,
+  pageCount,
+  onPageChange,
+}: {
+  page: number;
+  pageCount: number | null;
+  onPageChange: (page: number) => void;
+}) => (
+  <div className="flex items-center justify-between text-sm text-neutral-400">
+    <button
+      type="button"
+      onClick={() => onPageChange(page - 1)}
+      disabled={page <= 1}
+      className="rounded border border-neutral-700 px-3 py-1 hover:border-neutral-500 disabled:opacity-40"
+    >
+      Prev
+    </button>
+    <span>
+      Page {page}
+      {pageCount === null ? '' : ` of ${pageCount}`}
+    </span>
+    <button
+      type="button"
+      onClick={() => onPageChange(page + 1)}
+      disabled={pageCount !== null && page >= pageCount}
+      className="rounded border border-neutral-700 px-3 py-1 hover:border-neutral-500 disabled:opacity-40"
+    >
+      Next
+    </button>
+  </div>
+);
+
 const PdfViewer = ({ documentId, page, highlight, onPageChange }: PdfViewerProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const renderTaskRef = useRef<RenderTask | null>(null);
-  const [pdf, setPdf] = useState<PDFDocumentProxy | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [state, setState] = useState<PdfState>(LOADING);
   const [highlightRect, setHighlightRect] = useState<HighlightRect | null>(null);
 
   useEffect(() => {
     let cancelled = false;
-    setPdf(null);
-    setError(null);
+    setState(LOADING);
 
     loadFilingPdf(documentId)
-      .then(loaded => {
-        if (!cancelled) setPdf(loaded);
+      .then(pdf => {
+        if (!cancelled) setState({ pdf, error: null });
       })
       .catch((cause: unknown) => {
-        if (!cancelled) setError(cause instanceof Error ? cause.message : String(cause));
+        if (!cancelled) setState({ pdf: null, error: cause instanceof Error ? cause.message : String(cause) });
       });
 
     return () => {
       cancelled = true;
     };
   }, [documentId]);
+
+  const { pdf, error } = state;
 
   useEffect(() => {
     if (!pdf || !canvasRef.current || !containerRef.current) return;
@@ -109,34 +150,13 @@ const PdfViewer = ({ documentId, page, highlight, onPageChange }: PdfViewerProps
     };
   }, [pdf, page, highlight]);
 
-  if (error) {
-    return <p className="p-6 text-sm text-red-400">Could not load the PDF: {error}</p>;
-  }
+  if (error) return <ErrorState message={`Could not load the PDF: ${error}`} />;
+
+  if (!pdf) return <LoadingSkeleton label="Loading the filing PDF..." />;
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="flex items-center justify-between text-sm text-neutral-400">
-        <button
-          type="button"
-          onClick={() => onPageChange(page - 1)}
-          disabled={page <= 1}
-          className="rounded border border-neutral-700 px-3 py-1 hover:border-neutral-500 disabled:opacity-40"
-        >
-          Prev
-        </button>
-        <span>
-          Page {page}
-          {pdf ? ` of ${pdf.numPages}` : ''}
-        </span>
-        <button
-          type="button"
-          onClick={() => onPageChange(page + 1)}
-          disabled={pdf !== null && page >= pdf.numPages}
-          className="rounded border border-neutral-700 px-3 py-1 hover:border-neutral-500 disabled:opacity-40"
-        >
-          Next
-        </button>
-      </div>
+      <PageControls page={page} pageCount={pdf.numPages} onPageChange={onPageChange} />
 
       <div ref={containerRef} className="relative overflow-hidden rounded border border-neutral-800 bg-white">
         <canvas ref={canvasRef} />

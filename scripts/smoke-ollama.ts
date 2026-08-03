@@ -1,4 +1,5 @@
 import { OllamaProvider } from '../src/lib/providers/ollama';
+import { runCli } from './lib/cli';
 
 const runSmokeTest = async (): Promise<void> => {
   const provider = new OllamaProvider();
@@ -9,8 +10,4 @@ const runSmokeTest = async (): Promise<void> => {
   console.log(`[${provider.name}] ${result.text.trim()}`);
 };
 
-runSmokeTest().catch(error => {
-  console.error('Smoke test failed. Is Ollama running? Start it with: brew services start ollama');
-  console.error(error instanceof Error ? error.message : error);
-  process.exit(1);
-});
+runCli(runSmokeTest, 'Smoke test failed. Is Ollama running? Start it with: brew services start ollama');

@@ -50,3 +50,55 @@ export interface ManifestEntry {
   pages: number;
   chunkCount: number;
 }
+
+export interface GoldItem {
+  id: string;
+  documentId: string;
+  question: string;
+  /** Acceptable answer fragments; any match scores as correct. Absent for refusal probes. */
+  expected?: string[];
+  refusalExpected: boolean;
+}
+
+export interface QuestionResult {
+  id: string;
+  documentId: string;
+  correct: boolean;
+  refused: boolean;
+  citationValid: boolean;
+  confidence: number;
+  latencyMs: number;
+  error?: string;
+}
+
+export interface ModelResult {
+  model: string;
+  /** Fraction of answerable questions answered correctly. */
+  accuracy: number;
+  /** Fraction of refusal probes correctly declined. */
+  refusalAccuracy: number;
+  /** Fraction of non refused answers carrying at least one verified citation. */
+  citationRate: number;
+  avgLatencyMs: number;
+  avgConfidence: number;
+  perQuestion: QuestionResult[];
+}
+
+/** Wire format of public/data/results/results.json, rendered by the benchmark page. */
+export interface ResultsFile {
+  generatedAt: string;
+  goldSetSize: number;
+  models: ModelResult[];
+}
+
+/** One precomputed suggested question, served from public/data/demo/<id>.json. */
+export interface DemoItem {
+  question: string;
+  answer: Answer;
+}
+
+export interface DemoFile {
+  generatedAt: string;
+  model: string;
+  items: DemoItem[];
+}

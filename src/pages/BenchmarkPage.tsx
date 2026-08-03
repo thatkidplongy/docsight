@@ -1,10 +1,8 @@
-import { useEffect, useState } from 'react';
-import type { ResultsFile } from '../lib/eval/score';
+import type { ResultsFile } from '../lib/types';
+import { RESULTS_URL } from '../lib/retrieval/index-files';
+import { useJsonResource } from '../lib/hooks/useJsonResource';
+import { formatDuration, formatPercent } from '../lib/utils/format';
 import { EmptyState, ErrorState, LoadingSkeleton } from '../components/Demo/states';
-
-const percent = (value: number): string => `${Math.round(value * 100)}%`;
-
-const seconds = (ms: number): string => `${(ms / 1000).toFixed(1)}s`;
 
 const ResultsTable = ({ results }: { results: ResultsFile }) => (
   <div className="overflow-x-auto rounded border border-neutral-800">
@@ -23,11 +21,11 @@ const ResultsTable = ({ results }: { results: ResultsFile }) => (
         {results.models.map(model => (
           <tr key={model.model} className="border-t border-neutral-800">
             <td className="px-4 py-3 font-medium text-neutral-100">{model.model}</td>
-            <td className="px-4 py-3 text-cyan-300">{percent(model.accuracy)}</td>
-            <td className="px-4 py-3">{percent(model.refusalAccuracy)}</td>
-            <td className="px-4 py-3">{percent(model.citationRate)}</td>
-            <td className="px-4 py-3">{seconds(model.avgLatencyMs)}</td>
-            <td className="px-4 py-3">{percent(model.avgConfidence)}</td>
+            <td className="px-4 py-3 text-cyan-300">{formatPercent(model.accuracy)}</td>
+            <td className="px-4 py-3">{formatPercent(model.refusalAccuracy)}</td>
+            <td className="px-4 py-3">{formatPercent(model.citationRate)}</td>
+            <td className="px-4 py-3">{formatDuration(model.avgLatencyMs)}</td>
+            <td className="px-4 py-3">{formatPercent(model.avgConfidence)}</td>
           </tr>
         ))}
       </tbody>
@@ -61,40 +59,7 @@ const Methodology = ({ results }: { results: ResultsFile }) => (
 );
 
 const BenchmarkPage = () => {
-  const [results, setResults] = useState<ResultsFile | null>(null);
-  const [status, setStatus] = useState<'loading' | 'ready' | 'missing' | 'error'>('loading');
-
-  useEffect(() => {
-    let cancelled = false;
-
-    const fetchResults = async (): Promise<void> => {
-      try {
-        const response = await fetch('/data/results/results.json');
-
-        if (response.status === 404) {
-          if (!cancelled) setStatus('missing');
-          return;
-        }
-
-        if (!response.ok) throw new Error(`results fetch failed: ${response.status}`);
-
-        const file = (await response.json()) as ResultsFile;
-
-        if (!cancelled) {
-          setResults(file);
-          setStatus('ready');
-        }
-      } catch {
-        if (!cancelled) setStatus('error');
-      }
-    };
-
-    void fetchResults();
-
-    return () => {
-      cancelled = true;
-    };
-  }, []);
+  const { data: results, status } = useJsonResource<ResultsFile>(RESULTS_URL);
 
   if (status === 'loading') return <LoadingSkeleton label="Loading benchmark results..." />;
 

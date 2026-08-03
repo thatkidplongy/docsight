@@ -50,7 +50,8 @@ export const buildLines = (fragments: PositionedText[]): Line[] => {
 
   if (visible.length === 0) return [];
 
-  const sorted = [...visible].sort((a, b) => b.bbox[1] - a.bbox[1] || a.bbox[0] - b.bbox[0]);
+  // filter() already returned a fresh array, so sorting in place copies nothing.
+  const sorted = visible.sort((a, b) => b.bbox[1] - a.bbox[1] || a.bbox[0] - b.bbox[0]);
   const groups: PositionedText[][] = [];
 
   for (const fragment of sorted) {
@@ -63,7 +64,7 @@ export const buildLines = (fragments: PositionedText[]): Line[] => {
 
   return groups
     .map(group => {
-      const ordered = [...group].sort((a, b) => a.bbox[0] - b.bbox[0]);
+      const ordered = group.sort((a, b) => a.bbox[0] - b.bbox[0]);
 
       return {
         text: joinFragments(ordered),

@@ -1,4 +1,5 @@
 import type { Answer, SpanCitation } from '../../lib/types';
+import { formatPercent } from '../../lib/utils/format';
 
 interface AnswerCardProps {
   answer: Answer;
@@ -40,7 +41,6 @@ const CitationRow = ({ citation, onClick }: { citation: SpanCitation; onClick: (
 
 const AnswerCard = ({ answer, onCitationClick }: AnswerCardProps) => {
   const { confidence } = answer;
-  const percent = Math.round(confidence.overall * 100);
 
   if (answer.refused) {
     return (
@@ -62,7 +62,7 @@ const AnswerCard = ({ answer, onCitationClick }: AnswerCardProps) => {
           className="rounded-full bg-neutral-800 px-3 py-1 text-xs font-semibold text-cyan-300"
           title={`retrieval ${confidence.retrieval.toFixed(2)} · span verification ${confidence.spanVerification.toFixed(2)} · self consistency ${confidence.selfConsistency.toFixed(2)}`}
         >
-          {describeConfidence(confidence.overall)} confidence · {percent}%
+          {describeConfidence(confidence.overall)} confidence · {formatPercent(confidence.overall)}
         </span>
       </div>
 

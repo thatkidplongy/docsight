@@ -1,7 +1,13 @@
 import { useEffect, useState } from 'react';
 import type { Chunk } from '../types';
 import { buildDocumentIndex, type DocumentIndex } from '../retrieval/search';
+import { buildChunksFilename, buildEmbeddingsFilename, INDEX_URL } from '../retrieval/index-files';
 
+/**
+ * Indexes are cached for the session because building the BM25 side costs a
+ * full pass over every chunk; ten documents of embeddings is tens of MB, which
+ * is an acceptable trade for instant document switching.
+ */
 const indexCache = new Map<string, Promise<DocumentIndex>>();
 
 const fetchDocumentIndex = (documentId: string): Promise<DocumentIndex> => {
@@ -11,8 +17,8 @@ const fetchDocumentIndex = (documentId: string): Promise<DocumentIndex> => {
 
   const loading = (async () => {
     const [chunksResponse, embeddingsResponse] = await Promise.all([
-      fetch(`/data/index/${documentId}.chunks.json`),
-      fetch(`/data/index/${documentId}.embeddings.bin`),
+      fetch(`${INDEX_URL}/${buildChunksFilename(documentId)}`),
+      fetch(`${INDEX_URL}/${buildEmbeddingsFilename(documentId)}`),
     ]);
 
     if (!chunksResponse.ok || !embeddingsResponse.ok) {
@@ -35,23 +41,29 @@ interface DocumentIndexState {
   error: string | null;
 }
 
+const EMPTY: DocumentIndexState = { index: null, error: null };
+
 export const useDocumentIndex = (documentId: string | null): DocumentIndexState => {
-  const [state, setState] = useState<DocumentIndexState>({ index: null, error: null });
+  const [state, setState] = useState<DocumentIndexState>(EMPTY);
 
   useEffect(() => {
     if (!documentId) {
-      setState({ index: null, error: null });
+      setState(EMPTY);
       return;
     }
 
     let cancelled = false;
-    setState({ index: null, error: null });
+    setState(EMPTY);
 
     fetchDocumentIndex(documentId)
       .then(index => {
         if (!cancelled) setState({ index, error: null });
       })
       .catch((error: unknown) => {
+        // A failed index is not cached, so switching back retries rather than
+        // replaying the rejection forever.
+        indexCache.delete(documentId);
+
         if (!cancelled) setState({ index: null, error: error instanceof Error ? error.message : String(error) });
       });
 

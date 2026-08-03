@@ -22,10 +22,7 @@ const loadExtractor = (): Promise<FeatureExtractionPipeline> => {
  * [texts.length, EMBEDDING_DIMS], mean pooled and L2 normalised so cosine
  * similarity reduces to a dot product.
  */
-export const embedTexts = async (
-  texts: string[],
-  onProgress?: (done: number, total: number) => void
-): Promise<Float32Array> => {
+export const embedTexts = async (texts: string[]): Promise<Float32Array> => {
   const extractor = await loadExtractor();
   const embeddings = new Float32Array(texts.length * EMBEDDING_DIMS);
 
@@ -36,8 +33,10 @@ export const embedTexts = async (
 
     embeddings.set(values, start * EMBEDDING_DIMS);
     output.dispose();
-    onProgress?.(Math.min(start + BATCH_SIZE, texts.length), texts.length);
   }
 
   return embeddings;
 };
+
+/** Adapter for the single query shape every askQuestion call site needs. */
+export const embedQuery = (text: string): Promise<Float32Array> => embedTexts([text]);

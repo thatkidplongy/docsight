@@ -1,32 +1,28 @@
 /**
- * Phase 1 pipeline: for each company, fetch the latest 10-K from EDGAR, print
- * it to PDF with headless Chrome, extract text with coordinates, chunk it with
- * provenance intact, embed locally, and write the index to data/.
+ * Fetches each company's latest 10-K from EDGAR, prints it to PDF with headless
+ * Chrome, then hands the bytes to the shared pipeline. This script owns only
+ * fetching and file I/O; the extract, chunk and embed logic lives in
+ * src/lib/pipeline so the browser uploader runs the identical path.
  *
  * Run with: npm run ingest            (all companies)
  *           npm run ingest -- AAPL    (one company)
  */
 import { access, mkdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
+import type { ManifestEntry } from '../src/lib/types';
+import { buildDocumentAssets } from '../src/lib/pipeline/document';
+import {
+  buildChunksFilename,
+  buildEmbeddingsFilename,
+  buildFilingFilename,
+  MANIFEST_FILENAME,
+} from '../src/lib/retrieval/index-files';
 import { COMPANIES, findLatestTenK } from './lib/edgar';
 import { createPdfConverter, type PdfConverter } from './lib/html-to-pdf';
-import { buildChunks } from '../src/lib/pipeline/chunk';
-import { embedTexts } from '../src/lib/pipeline/embed';
-import { extractPages } from '../src/lib/pipeline/extract';
+import { runCli } from './lib/cli';
+import { FILINGS_DIR, INDEX_DIR } from './lib/paths';
 
-const FILINGS_DIR = path.resolve('public/data/filings');
-const INDEX_DIR = path.resolve('public/data/index');
-const MANIFEST_PATH = path.join(INDEX_DIR, 'manifest.json');
-
-interface ManifestEntry {
-  id: string;
-  ticker: string;
-  company: string;
-  form: string;
-  filingDate: string;
-  pages: number;
-  chunkCount: number;
-}
+const MANIFEST_PATH = path.join(INDEX_DIR, MANIFEST_FILENAME);
 
 const fileExists = (filePath: string): Promise<boolean> =>
   access(filePath).then(
@@ -39,11 +35,6 @@ const readManifest = async (): Promise<ManifestEntry[]> => {
 
   return JSON.parse(await readFile(MANIFEST_PATH, 'utf8')) as ManifestEntry[];
 };
-
-const upsertManifestEntry = (manifest: ManifestEntry[], entry: ManifestEntry): ManifestEntry[] => [
-  ...manifest.filter(existing => existing.id !== entry.id),
-  entry,
-];
 
 const runIngest = async (): Promise<void> => {
   const onlyTicker = process.argv[2]?.toUpperCase();
@@ -62,7 +53,7 @@ const runIngest = async (): Promise<void> => {
   try {
     for (const company of companies) {
       const id = company.ticker.toLowerCase();
-      const pdfPath = path.join(FILINGS_DIR, `${id}.pdf`);
+      const pdfPath = path.join(FILINGS_DIR, buildFilingFilename(id));
       const filing = await findLatestTenK(company.ticker);
 
       if (await fileExists(pdfPath)) {
@@ -73,27 +64,27 @@ const runIngest = async (): Promise<void> => {
         await converter.convertUrlToPdf(filing.url, pdfPath);
       }
 
-      const pages = await extractPages(new Uint8Array(await readFile(pdfPath)));
-      const chunks = buildChunks(id, pages);
-      console.log(`[${company.ticker}] ${pages.length} pages, ${chunks.length} chunks, embedding...`);
+      const { chunks, embeddings, pageCount } = await buildDocumentAssets(id, new Uint8Array(await readFile(pdfPath)));
+      console.log(`[${company.ticker}] ${pageCount} pages, ${chunks.length} chunks embedded`);
 
-      const embeddings = await embedTexts(chunks.map(chunk => chunk.text));
-
-      await writeFile(path.join(INDEX_DIR, `${id}.chunks.json`), JSON.stringify(chunks));
+      await writeFile(path.join(INDEX_DIR, buildChunksFilename(id)), JSON.stringify(chunks));
       await writeFile(
-        path.join(INDEX_DIR, `${id}.embeddings.bin`),
+        path.join(INDEX_DIR, buildEmbeddingsFilename(id)),
         Buffer.from(embeddings.buffer, embeddings.byteOffset, embeddings.byteLength)
       );
 
-      manifest = upsertManifestEntry(manifest, {
-        id,
-        ticker: company.ticker,
-        company: company.name,
-        form: filing.form,
-        filingDate: filing.filingDate,
-        pages: pages.length,
-        chunkCount: chunks.length,
-      });
+      manifest = [
+        ...manifest.filter(existing => existing.id !== id),
+        {
+          id,
+          ticker: company.ticker,
+          company: company.name,
+          form: filing.form,
+          filingDate: filing.filingDate,
+          pages: pageCount,
+          chunkCount: chunks.length,
+        },
+      ];
       await writeFile(MANIFEST_PATH, JSON.stringify(manifest, null, 2));
       console.log(`[${company.ticker}] indexed`);
     }
@@ -104,7 +95,4 @@ const runIngest = async (): Promise<void> => {
   console.log(`Done. ${manifest.length} documents in the manifest.`);
 };
 
-runIngest().catch(error => {
-  console.error(error instanceof Error ? error.stack : error);
-  process.exit(1);
-});
+runCli(runIngest);

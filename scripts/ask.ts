@@ -4,9 +4,10 @@
  * Run with: npm run ask -- AAPL "How much did Apple spend on research and development?"
  */
 import { OllamaProvider } from '../src/lib/providers/ollama';
-import { embedTexts } from '../src/lib/pipeline/embed';
+import { embedQuery } from '../src/lib/pipeline/embed';
 import { askQuestion } from '../src/lib/qa/ask';
 import { loadDocumentIndex } from './lib/load-index';
+import { runCli } from './lib/cli';
 
 const runAsk = async (): Promise<void> => {
   const [ticker, ...questionParts] = process.argv.slice(2);
@@ -17,11 +18,8 @@ const runAsk = async (): Promise<void> => {
   }
 
   const index = await loadDocumentIndex(ticker.toLowerCase());
-  // Thinking markedly improves answer quality on qwen3; Ollama keeps the
-  // reasoning separate from the JSON constrained content.
-  const provider = new OllamaProvider({ think: true });
-
-  const answer = await askQuestion({ provider, embedQuery: async text => await embedTexts([text]) }, index, question);
+  const provider = new OllamaProvider();
+  const answer = await askQuestion({ provider, embedQuery }, index, question);
 
   console.log(`\nmodel: ${answer.model}`);
   console.log(`refused: ${answer.refused}`);
@@ -38,7 +36,4 @@ const runAsk = async (): Promise<void> => {
   );
 };
 
-runAsk().catch(error => {
-  console.error(error instanceof Error ? error.message : error);
-  process.exit(1);
-});
+runCli(runAsk);
