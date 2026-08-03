@@ -10,7 +10,10 @@
   ],
   "msft": ["What was Microsoft's total revenue in fiscal 2026?", "What was Microsoft's net income in fiscal 2026?"],
   "amzn": ["What were Amazon's total net sales in 2025?", "What was Amazon's net income in 2025?"],
-  "dis": ["What were Disney's total revenues in fiscal 2025?", "What was Disney's net income in fiscal 2025?"],
+  "dis": [
+    "What were Disney's total revenues in fiscal 2025?",
+    "What was Disney's net income attributable to Disney in fiscal 2025?"
+  ],
   "nflx": ["What were Netflix's total revenues in 2025?", "What was Netflix's net income in 2025?"],
   "nke": ["What was Nike's net income in fiscal 2026?", "What was Nike's demand creation expense in fiscal 2026?"],
   "mcd": ["What were McDonald's total revenues in 2025?", "What was McDonald's net income in 2025?"],

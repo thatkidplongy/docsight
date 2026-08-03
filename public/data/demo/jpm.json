@@ -1,0 +1,57 @@
+{
+  "generatedAt": "2026-08-03T12:48:26.062Z",
+  "model": "ollama/qwen3:4b",
+  "items": [
+    {
+      "question": "What was JPMorgan's net income in 2025?",
+      "answer": {
+        "question": "What was JPMorgan's net income in 2025?",
+        "text": "$57.0 billion",
+        "citations": [
+          {
+            "quote": "JPMorganChase reported net income of $57.0 billion for 2025, down 2%",
+            "chunkId": "jpm-270",
+            "verified": false
+          }
+        ],
+        "confidence": {
+          "retrieval": 0.689090258529742,
+          "spanVerification": 0,
+          "selfConsistency": 0.5,
+          "overall": 0.3411815904854097
+        },
+        "model": "ollama/qwen3:4b",
+        "refused": false
+      }
+    },
+    {
+      "question": "What was JPMorgan's total net revenue on a managed basis in 2025?",
+      "answer": {
+        "question": "What was JPMorgan's total net revenue on a managed basis in 2025?",
+        "text": "182,447 million",
+        "citations": [
+          {
+            "quote": "Total net revenue 182,447 3,134 185,581 177,556 3,037 180,593 158,104 4,262 162,366",
+            "chunkId": "jpm-314",
+            "verified": true,
+            "page": 128,
+            "bbox": [
+              41.99999825,
+              206.25002440625394,
+              520.7798664007153,
+              212.497491070946
+            ]
+          }
+        ],
+        "confidence": {
+          "retrieval": 0.7148655207921789,
+          "spanVerification": 1,
+          "selfConsistency": 1,
+          "overall": 0.9002029322772627
+        },
+        "model": "ollama/qwen3:4b",
+        "refused": false
+      }
+    }
+  ]
+}

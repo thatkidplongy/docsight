@@ -18,6 +18,15 @@ hybrid: lexical keyword scoring (BM25 style) combined with the dense score, not 
 call `loadingTask.destroy()`. `content.items` needs an `unknown[]` cast before a custom type
 guard because the union with `TextMarkedContent` will not narrow through `.filter()`.
 
+## Ambiguous gold questions score correct answers as wrong
+
+"What was Disney's net income in fiscal 2025?" has two defensible answers, because the income
+statement reports both `Net income 13,431` (including noncontrolling interests) and `Net income
+attributable to Disney $ 12,404`. The gold label only accepted the first, so the model answering
+12.4 billion with a correctly verified citation was scored wrong. Any company with noncontrolling
+interests has this split. When adding gold questions, name the exact line item rather than a
+colloquial label, and check whether the statement reports more than one variant of the figure.
+
 ## Thinking models need streaming, temperature, and budget headroom
 
 Three separate failures with the same symptom (empty or dead responses from qwen3):

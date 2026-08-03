@@ -30,9 +30,9 @@
   { "id": "amzn-u", "documentId": "amzn", "question": "How many Prime members does Amazon have in the Philippines?", "refusalExpected": true },
 
   { "id": "dis-1", "documentId": "dis", "question": "What were Disney's total revenues in fiscal 2025?", "expected": ["94,425", "94.4 billion"], "refusalExpected": false },
-  { "id": "dis-2", "documentId": "dis", "question": "What was Disney's net income in fiscal 2025?", "expected": ["13,431", "13.4 billion"], "refusalExpected": false },
+  { "id": "dis-2", "documentId": "dis", "question": "What was Disney's net income attributable to Disney in fiscal 2025?", "expected": ["12,404", "12.4 billion"], "refusalExpected": false },
   { "id": "dis-3", "documentId": "dis", "question": "What were Disney's total revenues in fiscal 2024?", "expected": ["91,361", "91.4 billion"], "refusalExpected": false },
-  { "id": "dis-4", "documentId": "dis", "question": "What was Disney's net income in fiscal 2024?", "expected": ["5,773", "5.8 billion"], "refusalExpected": false },
+  { "id": "dis-4", "documentId": "dis", "question": "What was Disney's net income attributable to Disney in fiscal 2024?", "expected": ["4,972", "5.0 billion"], "refusalExpected": false },
   { "id": "dis-u", "documentId": "dis", "question": "What is the price of a one day ticket at Disneyland Paris?", "refusalExpected": true },
 
   { "id": "nflx-1", "documentId": "nflx", "question": "What were Netflix's total revenues in 2025?", "expected": ["45,183,036", "45,183", "45.2 billion"], "refusalExpected": false },

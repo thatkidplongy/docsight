@@ -239,9 +239,16 @@ answer while citing a sentence they had invented.** Judged on answers alone they
 Judged on whether they can prove their answers, they fall apart. A tool that only measured accuracy
 would have called them good enough.
 
-Notable failure pattern: three of the four Disney questions failed across the board. Disney's
-financial statement layout retrieves poorly with the current chunking strategy, which is a
-retrieval problem rather than a model problem, and it is the clearest lead for future improvement.
+**These numbers predate a gold set correction and understate Disney.** Two of the four Disney
+questions asked for "net income" when the income statement reports two different figures: total net
+income including noncontrolling interests, and net income attributable to Disney. The models
+answered with the attributable figure, correctly cited, and my label only accepted the other one.
+The questions are now specific about which line item they want, so a rerun should score higher than
+the table shows. The lesson is recorded in [`CLAUDE_GOTCHAS.md`](CLAUDE_GOTCHAS.md).
+
+That mistake is itself the argument for building the eval. Without a gold set to disagree with, an
+ambiguous question just produces a confident wrong looking answer and nobody notices which side the
+error is on.
 
 Latency reflects a laptop running local models, not a datacenter.
 
@@ -372,8 +379,10 @@ a thinking model can return nothing at all. Those notes are more useful than a c
 ## Honest limitations
 
 - **Ten documents, one document type.** All are SEC 10-K filings. Other formats are untested.
-- **Chunking struggles with some table layouts.** Disney is the clearest example, and it is why
-  three of its four benchmark questions fail.
+- **The published benchmark predates a gold set fix.** Two Disney labels were ambiguous, so the
+  table understates accuracy until the eval is rerun.
+- **Gold labels are hand written and can be wrong.** One ambiguity was already found and corrected.
+  Forty nine questions is a small enough set that others may remain.
 - **Highlights cover the passage, not the sentence.** The box surrounds the region the passage came
   from, which is precise enough to find the source instantly but is not a word level highlight.
 - **The gold set is 49 questions.** Enough to expose the citation gap between models, not enough for
