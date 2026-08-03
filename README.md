@@ -63,15 +63,15 @@ Here is a real walkthrough, start to finish.
 **1. You pick a filing.** Ten real annual reports (SEC form 10-K) from companies like Apple,
 Nvidia and JPMorgan. Real documents, between 85 and 562 pages each.
 
-**2. You ask a question.** For example: *"How much did Apple spend on research and development in
-fiscal 2025?"*
+**2. You ask a question.** For example: _"How much did Apple spend on research and development in
+fiscal 2025?"_
 
 **3. You get an answer with a receipt:**
 
 > **34,550 million** &nbsp;&nbsp; `High confidence · 85%`
 >
 > **VERIFIED · PAGE 36**
-> *"Research and development $ 34,550 10 % $ 31,370 5 % $ 29,915 Percentage of total net sales 8% 8% 8%"*
+> _"Research and development $ 34,550 10 % $ 31,370 5 % $ 29,915 Percentage of total net sales 8% 8% 8%"_
 
 **4. You click the quote.** The PDF viewer jumps to page 36 and draws a box around the exact region
 that sentence came from. You can see the source with your own eyes in about one second.
@@ -111,7 +111,7 @@ whole feature is impossible. So provenance is treated as sacred: every transform
 page number and the bounding box forward.
 
 The "numeric fingerprint" is called an embedding. It is a list of 384 numbers that captures the
-*meaning* of a passage, so passages about similar topics end up with similar numbers. This lets us
+_meaning_ of a passage, so passages about similar topics end up with similar numbers. This lets us
 find relevant passages by meaning rather than by exact keyword.
 
 ### Phase two: answering a question (happens per question)
@@ -224,11 +224,11 @@ ask for verifiable figures. Ten are refusal probes, asking for facts the documen
 Every model runs the identical pipeline: same retrieval, same prompt, same verification. Only the
 model changes.
 
-| Model | Accuracy | Correct refusals | Verified citations | Avg time |
-| --- | --- | --- | --- | --- |
-| qwen3:4b | **87%** | 100% | **92%** | 177.5s |
-| gemma3:4b | 79% | 100% | 59% | 13.4s |
-| llama3.2:3b | 77% | 90% | 46% | 5.7s |
+| Model       | Accuracy | Correct refusals | Verified citations | Avg time |
+| ----------- | -------- | ---------------- | ------------------ | -------- |
+| qwen3:4b    | **87%**  | 100%             | **92%**            | 177.5s   |
+| gemma3:4b   | 79%      | 100%             | 59%                | 13.4s    |
+| llama3.2:3b | 77%      | 90%              | 46%                | 5.7s     |
 
 **Read the citation column, not the accuracy column.** Accuracy across the three models is fairly
 close, between 77% and 87%. But the rate at which their quoted sentences survive verification ranges
@@ -272,20 +272,20 @@ Open the address it prints. Pick a filing, click a suggested question, click the
 
 ### Every command
 
-| Command | What it does |
-| --- | --- |
-| `npm run dev` | Start the app |
-| `npm run build` | Type check and build for production |
-| `npm test` | Run the unit tests (66 tests) |
-| `npm run lint` | Lint |
-| `npm run format` | Format with Prettier |
-| `npm run smoke` | Check the local model connection works |
-| `npm run ask -- AAPL "your question"` | Ask from the terminal |
-| `npm run ingest` | Prepare all ten documents from scratch (slow) |
-| `npm run ingest -- AAPL` | Prepare one document |
-| `npm run eval` | Run the full benchmark (hours) |
-| `npm run eval -- gemma3:4b` | Benchmark one model |
-| `npm run precompute` | Generate the suggested answers |
+| Command                               | What it does                                  |
+| ------------------------------------- | --------------------------------------------- |
+| `npm run dev`                         | Start the app                                 |
+| `npm run build`                       | Type check and build for production           |
+| `npm test`                            | Run the unit tests (66 tests)                 |
+| `npm run lint`                        | Lint                                          |
+| `npm run format`                      | Format with Prettier                          |
+| `npm run smoke`                       | Check the local model connection works        |
+| `npm run ask -- AAPL "your question"` | Ask from the terminal                         |
+| `npm run ingest`                      | Prepare all ten documents from scratch (slow) |
+| `npm run ingest -- AAPL`              | Prepare one document                          |
+| `npm run eval`                        | Run the full benchmark (hours)                |
+| `npm run eval -- gemma3:4b`           | Benchmark one model                           |
+| `npm run precompute`                  | Generate the suggested answers                |
 
 ### Asking your own questions
 
