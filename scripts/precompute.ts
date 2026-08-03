@@ -41,22 +41,33 @@ const runPrecompute = async (): Promise<void> => {
 
   const provider = new OllamaProvider({ think: true });
 
+  const deps = { provider, embedQuery: async (text: string) => await embedTexts([text]) };
+
   for (const [documentId, questions] of entries) {
     const index = await loadDocumentIndex(documentId);
     const items = [];
 
     for (const question of questions) {
       console.log(`[${documentId}] ${question}`);
-      const answer = await askQuestion(
-        { provider, embedQuery: async text => await embedTexts([text]) },
-        index,
-        question,
-        { consistencySamples: 2 }
-      );
-      items.push({ question, answer });
-      console.log(
-        `[${documentId}]   -> ${answer.text.slice(0, 80)} (confidence ${answer.confidence.overall.toFixed(2)})`
-      );
+
+      try {
+        let answer;
+
+        try {
+          answer = await askQuestion(deps, index, question, { consistencySamples: 2 });
+        } catch (firstError) {
+          console.log(`[${documentId}]   retrying after: ${String(firstError)}`);
+          answer = await askQuestion(deps, index, question, { consistencySamples: 2 });
+        }
+
+        items.push({ question, answer });
+        console.log(
+          `[${documentId}]   -> ${answer.text.slice(0, 80)} (confidence ${answer.confidence.overall.toFixed(2)})`
+        );
+      } catch (error) {
+        // A missing suggested question beats an aborted precompute run.
+        console.log(`[${documentId}]   SKIPPED after retry: ${String(error)}`);
+      }
     }
 
     await writeFile(

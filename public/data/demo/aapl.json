@@ -1,0 +1,64 @@
+{
+  "generatedAt": "2026-08-02T18:48:18.813Z",
+  "model": "ollama/qwen3:4b",
+  "items": [
+    {
+      "question": "What were Apple's total net sales in fiscal 2025?",
+      "answer": {
+        "question": "What were Apple's total net sales in fiscal 2025?",
+        "text": "416,161 million",
+        "citations": [
+          {
+            "quote": "Total net sales $ 416,161 $ 391,035 $ 383,285",
+            "chunkId": "aapl-169",
+            "verified": true,
+            "page": 55,
+            "bbox": [
+              41.99999825,
+              445.5000144375008,
+              527.9999787649999,
+              256.4999893125015
+            ]
+          }
+        ],
+        "confidence": {
+          "retrieval": 0.6856470381754229,
+          "spanVerification": 1,
+          "selfConsistency": 1,
+          "overall": 0.889976463361398
+        },
+        "model": "ollama/qwen3:4b",
+        "refused": false
+      }
+    },
+    {
+      "question": "How much did Apple spend on research and development in fiscal 2025?",
+      "answer": {
+        "question": "How much did Apple spend on research and development in fiscal 2025?",
+        "text": "34,550 million",
+        "citations": [
+          {
+            "quote": "Research and development $ 34,550 10 % $ 31,370 5 % $ 29,915 Percentage of total net sales 8% 8% 8%",
+            "chunkId": "aapl-126",
+            "verified": true,
+            "page": 36,
+            "bbox": [
+              41.99999825,
+              51.75003084374839,
+              527.9941197052441,
+              305.99998725000034
+            ]
+          }
+        ],
+        "confidence": {
+          "retrieval": 0.5811582251216255,
+          "spanVerification": 1,
+          "selfConsistency": 1,
+          "overall": 0.8534053787925688
+        },
+        "model": "ollama/qwen3:4b",
+        "refused": false
+      }
+    }
+  ]
+}

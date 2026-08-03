@@ -18,6 +18,14 @@ hybrid: lexical keyword scoring (BM25 style) combined with the dense score, not 
 call `loadingTask.destroy()`. `content.items` needs an `unknown[]` cast before a custom type
 guard because the union with `TextMarkedContent` will not narrow through `.filter()`.
 
+## Thinking models need streaming, temperature, and budget headroom
+
+Three separate failures with the same symptom (empty or dead responses from qwen3):
+Node fetch kills non streamed responses idle 300s (stream: true fixes it); greedy decoding
+makes qwen3's thinking loop until the token budget dies (Qwen documents 0.6 for thinking);
+and thinking measures ~2,700 tokens on financial questions, so output budgets must be sized
+to that, not to the answer. All three fixes live in src/lib/providers/ollama.ts.
+
 ## tsx outside the package compiles as CJS
 
 Scripts run from outside the repo (scratchpad checks) hit "Top-level await is currently not

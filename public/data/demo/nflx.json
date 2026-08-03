@@ -1,0 +1,64 @@
+{
+  "generatedAt": "2026-08-02T21:33:33.045Z",
+  "model": "ollama/qwen3:4b",
+  "items": [
+    {
+      "question": "What were Netflix's total revenues in 2025?",
+      "answer": {
+        "question": "What were Netflix's total revenues in 2025?",
+        "text": "45,183,036",
+        "citations": [
+          {
+            "quote": "Total revenues $ 45,183,036 $ 39,000,966 $ 33,723,297 $ 6,182,070 16 %",
+            "chunkId": "nflx-120",
+            "verified": true,
+            "page": 36,
+            "bbox": [
+              41.56700870004123,
+              476.25926654786235,
+              528.636941305214,
+              280.8974170294023
+            ]
+          }
+        ],
+        "confidence": {
+          "retrieval": 0.6174140257074664,
+          "spanVerification": 1,
+          "selfConsistency": 1,
+          "overall": 0.8660949089976133
+        },
+        "model": "ollama/qwen3:4b",
+        "refused": false
+      }
+    },
+    {
+      "question": "What was Netflix's net income in 2025?",
+      "answer": {
+        "question": "What was Netflix's net income in 2025?",
+        "text": "10,981,201",
+        "citations": [
+          {
+            "quote": "$ 10,981,201",
+            "chunkId": "nflx-198",
+            "verified": true,
+            "page": 62,
+            "bbox": [
+              41.56700870004123,
+              325.254934231707,
+              528.1167705649576,
+              431.90256870552184
+            ]
+          }
+        ],
+        "confidence": {
+          "retrieval": 0.5574382776305835,
+          "spanVerification": 1,
+          "selfConsistency": 0.5,
+          "overall": 0.7451033971707042
+        },
+        "model": "ollama/qwen3:4b",
+        "refused": false
+      }
+    }
+  ]
+}

@@ -1,0 +1,64 @@
+{
+  "generatedAt": "2026-08-02T19:40:11.083Z",
+  "model": "ollama/qwen3:4b",
+  "items": [
+    {
+      "question": "What were Tesla's total revenues in 2025?",
+      "answer": {
+        "question": "What were Tesla's total revenues in 2025?",
+        "text": "94,827",
+        "citations": [
+          {
+            "quote": "Total revenues 94,827 97,690 96,773",
+            "chunkId": "tsla-259",
+            "verified": true,
+            "page": 86,
+            "bbox": [
+              42.99609195849609,
+              318.75001971875463,
+              525.4658021455906,
+              396.24748341468137
+            ]
+          }
+        ],
+        "confidence": {
+          "retrieval": 0.6328136116408701,
+          "spanVerification": 1,
+          "selfConsistency": 1,
+          "overall": 0.8714847640743046
+        },
+        "model": "ollama/qwen3:4b",
+        "refused": false
+      }
+    },
+    {
+      "question": "How much did Tesla spend on research and development in 2025?",
+      "answer": {
+        "question": "How much did Tesla spend on research and development in 2025?",
+        "text": "$6,411 million",
+        "citations": [
+          {
+            "quote": "Research and development 6,411",
+            "chunkId": "tsla-259",
+            "verified": true,
+            "page": 86,
+            "bbox": [
+              42.99609195849609,
+              318.75001971875463,
+              525.4658021455906,
+              396.24748341468137
+            ]
+          }
+        ],
+        "confidence": {
+          "retrieval": 0.472608177940324,
+          "spanVerification": 1,
+          "selfConsistency": 1,
+          "overall": 0.8154128622791135
+        },
+        "model": "ollama/qwen3:4b",
+        "refused": false
+      }
+    }
+  ]
+}

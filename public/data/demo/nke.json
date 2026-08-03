@@ -1,0 +1,64 @@
+{
+  "generatedAt": "2026-08-02T22:01:19.332Z",
+  "model": "ollama/qwen3:4b",
+  "items": [
+    {
+      "question": "What was Nike's net income in fiscal 2026?",
+      "answer": {
+        "question": "What was Nike's net income in fiscal 2026?",
+        "text": "$3,108 million",
+        "citations": [
+          {
+            "quote": "Net income $ 3,108 $ 3,219 $ 5,700",
+            "chunkId": "nke-274",
+            "verified": true,
+            "page": 93,
+            "bbox": [
+              41.99999825,
+              437.2500147812534,
+              526.4703369042344,
+              306.9974871334301
+            ]
+          }
+        ],
+        "confidence": {
+          "retrieval": 0.7768192793070267,
+          "spanVerification": 1,
+          "selfConsistency": 1,
+          "overall": 0.9218867477574593
+        },
+        "model": "ollama/qwen3:4b",
+        "refused": false
+      }
+    },
+    {
+      "question": "What was Nike's demand creation expense in fiscal 2026?",
+      "answer": {
+        "question": "What was Nike's demand creation expense in fiscal 2026?",
+        "text": "4,754 million",
+        "citations": [
+          {
+            "quote": "Total Demand creation expense was $4,754 million, $4,689 million and $4,285 million for the years ended May 31, 2026, 2025 and 2024, respectively.",
+            "chunkId": "nke-295",
+            "verified": true,
+            "page": 102,
+            "bbox": [
+              41.99999825,
+              578.2500089062523,
+              525.8729941011244,
+              165.99749300844576
+            ]
+          }
+        ],
+        "confidence": {
+          "retrieval": 0.7532051140515306,
+          "spanVerification": 1,
+          "selfConsistency": 1,
+          "overall": 0.9136217899180357
+        },
+        "model": "ollama/qwen3:4b",
+        "refused": false
+      }
+    }
+  ]
+}

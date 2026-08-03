@@ -1,0 +1,64 @@
+{
+  "generatedAt": "2026-08-02T20:08:41.881Z",
+  "model": "ollama/qwen3:4b",
+  "items": [
+    {
+      "question": "What was Microsoft's total revenue in fiscal 2026?",
+      "answer": {
+        "question": "What was Microsoft's total revenue in fiscal 2026?",
+        "text": "$331,839 million",
+        "citations": [
+          {
+            "quote": "$ 331,839",
+            "chunkId": "msft-351",
+            "verified": true,
+            "page": 133,
+            "bbox": [
+              41.99999825,
+              48.750030968745705,
+              527.9913242277995,
+              212.99999112500757
+            ]
+          }
+        ],
+        "confidence": {
+          "retrieval": 0.6690021988886299,
+          "spanVerification": 1,
+          "selfConsistency": 1,
+          "overall": 0.8841507696110205
+        },
+        "model": "ollama/qwen3:4b",
+        "refused": false
+      }
+    },
+    {
+      "question": "What was Microsoft's net income in fiscal 2026?",
+      "answer": {
+        "question": "What was Microsoft's net income in fiscal 2026?",
+        "text": "133,749 million",
+        "citations": [
+          {
+            "quote": "Net income $ 133,749 $ 101,832 $ 88,136",
+            "chunkId": "msft-233",
+            "verified": true,
+            "page": 83,
+            "bbox": [
+              41.99999825,
+              506.25001190625335,
+              526.0089111384605,
+              214.49999106249982
+            ]
+          }
+        ],
+        "confidence": {
+          "retrieval": 0.6432489850300291,
+          "spanVerification": 1,
+          "selfConsistency": 1,
+          "overall": 0.8751371447605103
+        },
+        "model": "ollama/qwen3:4b",
+        "refused": false
+      }
+    }
+  ]
+}

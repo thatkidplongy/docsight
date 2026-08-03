@@ -1,0 +1,64 @@
+{
+  "generatedAt": "2026-08-02T22:17:42.937Z",
+  "model": "ollama/qwen3:4b",
+  "items": [
+    {
+      "question": "What were McDonald's total revenues in 2025?",
+      "answer": {
+        "question": "What were McDonald's total revenues in 2025?",
+        "text": "26.9 billion",
+        "citations": [
+          {
+            "quote": "Consolidated revenues increased 4% (2% in constant currencies) to $26.9 billion.",
+            "chunkId": "mcd-37",
+            "verified": true,
+            "page": 11,
+            "bbox": [
+              41.48223225557358,
+              395.5425555910606,
+              509.89993608192066,
+              168.5786879838878
+            ]
+          }
+        ],
+        "confidence": {
+          "retrieval": 0.7540795075808069,
+          "spanVerification": 1,
+          "selfConsistency": 1,
+          "overall": 0.9139278276532823
+        },
+        "model": "ollama/qwen3:4b",
+        "refused": false
+      }
+    },
+    {
+      "question": "What was McDonald's net income in 2025?",
+      "answer": {
+        "question": "What was McDonald's net income in 2025?",
+        "text": "8,563 million",
+        "citations": [
+          {
+            "quote": "GAAP net income $ 8,563 $ 8,223 4 % 3 %",
+            "chunkId": "mcd-58",
+            "verified": true,
+            "page": 18,
+            "bbox": [
+              41.48223225557358,
+              255.06072806846896,
+              529.0275301617189,
+              317.9695578232685
+            ]
+          }
+        ],
+        "confidence": {
+          "retrieval": 0.7040458999454376,
+          "spanVerification": 1,
+          "selfConsistency": 1,
+          "overall": 0.8964160649809032
+        },
+        "model": "ollama/qwen3:4b",
+        "refused": false
+      }
+    }
+  ]
+}

@@ -1,0 +1,64 @@
+{
+  "generatedAt": "2026-08-02T19:14:54.810Z",
+  "model": "ollama/qwen3:4b",
+  "items": [
+    {
+      "question": "What was Nvidia's revenue in fiscal 2026?",
+      "answer": {
+        "question": "What was Nvidia's revenue in fiscal 2026?",
+        "text": "$215.9 billion",
+        "citations": [
+          {
+            "quote": "Revenue for fiscal year 2026 was $215.9 billion, up 65% from a year ago.",
+            "chunkId": "nvda-220",
+            "verified": true,
+            "page": 67,
+            "bbox": [
+              41.99999825,
+              198.00002474999928,
+              527.998512410061,
+              265.49998893749864
+            ]
+          }
+        ],
+        "confidence": {
+          "retrieval": 0.5826757927521542,
+          "spanVerification": 1,
+          "selfConsistency": 0.5,
+          "overall": 0.753936527463254
+        },
+        "model": "ollama/qwen3:4b",
+        "refused": false
+      }
+    },
+    {
+      "question": "What was Nvidia's net income in fiscal 2026?",
+      "answer": {
+        "question": "What was Nvidia's net income in fiscal 2026?",
+        "text": "120,067 million",
+        "citations": [
+          {
+            "quote": "Net income $ 120,067 $ 72,880 $ 29,760",
+            "chunkId": "nvda-281",
+            "verified": true,
+            "page": 88,
+            "bbox": [
+              41.99999825,
+              483.7500128437532,
+              526.0400208716649,
+              272.74498848562837
+            ]
+          }
+        ],
+        "confidence": {
+          "retrieval": 0.6665730397911804,
+          "spanVerification": 1,
+          "selfConsistency": 1,
+          "overall": 0.8833005639269131
+        },
+        "model": "ollama/qwen3:4b",
+        "refused": false
+      }
+    }
+  ]
+}

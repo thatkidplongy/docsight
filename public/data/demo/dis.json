@@ -1,0 +1,35 @@
+{
+  "generatedAt": "2026-08-02T21:01:22.255Z",
+  "model": "ollama/qwen3:4b",
+  "items": [
+    {
+      "question": "What were Disney's total revenues in fiscal 2025?",
+      "answer": {
+        "question": "What were Disney's total revenues in fiscal 2025?",
+        "text": "$94.4 billion",
+        "citations": [
+          {
+            "quote": "Revenues for fiscal 2025 increased 3%, or $3.1 billion, to $94.4 billion",
+            "chunkId": "dis-196",
+            "verified": true,
+            "page": 67,
+            "bbox": [
+              41.99999825,
+              566.2500094062489,
+              527.2502276117388,
+              190.9949918918752
+            ]
+          }
+        ],
+        "confidence": {
+          "retrieval": 0.6533979079480852,
+          "spanVerification": 1,
+          "selfConsistency": 1,
+          "overall": 0.8786892677818299
+        },
+        "model": "ollama/qwen3:4b",
+        "refused": false
+      }
+    }
+  ]
+}
