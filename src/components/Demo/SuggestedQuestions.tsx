@@ -11,7 +11,8 @@ const SuggestedQuestions = ({ items, onPick }: SuggestedQuestionsProps) => {
 
   return (
     <div>
-      <span className="text-xs uppercase tracking-wide text-neutral-500">Try one</span>
+      <span className="text-xs uppercase tracking-wide text-cyan-400">Start here</span>
+      <span className="ml-2 text-xs text-neutral-500">Instant answers, nothing to set up</span>
       <div className="mt-2 flex flex-wrap gap-2">
         {items.map(item => (
           <button

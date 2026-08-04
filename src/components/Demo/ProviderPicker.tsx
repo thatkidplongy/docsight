@@ -10,10 +10,8 @@ interface ProviderPickerProps {
  * persisted, never sent anywhere except Google's API from this browser.
  */
 const ProviderPicker = ({ choice, onChange }: ProviderPickerProps) => (
-  <div className="rounded border border-neutral-800 bg-neutral-900/40 p-3 text-sm">
-    <span className="text-xs uppercase tracking-wide text-neutral-500">Live model</span>
-
-    <div className="mt-2 flex flex-wrap items-center gap-4">
+  <div className="text-sm">
+    <div className="flex flex-wrap items-center gap-4">
       <label className="flex items-center gap-2 text-neutral-300">
         <input
           type="radio"

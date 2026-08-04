@@ -34,7 +34,16 @@ const BUSY_LABELS: Partial<Record<AskState['kind'], string>> = {
 };
 
 const IDLE_HINT =
-  'Ask a question and every claim in the answer arrives with a citation you can click to see the exact source region, verified against the document by code rather than trusted from the model.';
+  'Click a question above to see it work. The answer arrives with a quoted citation; click that citation and the viewer jumps to the exact source region on the page.';
+
+/**
+ * Visitors on the deployed site have no local Ollama, so defaulting to it
+ * guarantees their first live ask fails. Local development keeps Ollama.
+ */
+const DEFAULT_PROVIDER_CHOICE: ProviderChoice =
+  window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    ? { kind: 'ollama' }
+    : { kind: 'gemini', apiKey: '' };
 
 const buildProvider = (choice: ProviderChoice): Provider => {
   if (choice.kind === 'gemini') return new GeminiProvider({ apiKey: choice.apiKey });
@@ -42,15 +51,48 @@ const buildProvider = (choice: ProviderChoice): Provider => {
   return new OllamaProvider();
 };
 
+const buildAskErrorHint = (choice: ProviderChoice): string => {
+  if (choice.kind === 'ollama') {
+    return ' Live asking with the local option needs Ollama running on your machine; try a suggested question above, or add a Gemini key under Model settings.';
+  }
+
+  if (!choice.apiKey.trim()) {
+    return ' Add a free Gemini key under Model settings (aistudio.google.com), or click a suggested question above.';
+  }
+
+  return '';
+};
+
 const findFirstVerified = (answer: Answer): SpanCitation | undefined =>
   answer.citations.find(citation => citation.verified);
+
+const IntroHeader = () => (
+  <header className="mb-8 max-w-3xl">
+    <h1 className="text-3xl font-semibold text-white">Ask a filing. Get an answer with proof.</h1>
+    <p className="mt-3 leading-relaxed text-neutral-400">
+      DocSight answers questions about real SEC filings and backs every claim with a citation, checked against the
+      document by code rather than trusted from the model.
+    </p>
+    <ol className="mt-4 flex flex-col gap-2 text-sm text-neutral-400 sm:flex-row sm:gap-8">
+      <li>
+        <span className="font-semibold text-cyan-400">1.</span> Click a suggested question
+      </li>
+      <li>
+        <span className="font-semibold text-cyan-400">2.</span> Read the answer and its quote
+      </li>
+      <li>
+        <span className="font-semibold text-cyan-400">3.</span> Click the citation to see the source
+      </li>
+    </ol>
+  </header>
+);
 
 const DemoPage = () => {
   const { data: manifest, status: manifestStatus, error: manifestError } = useManifest();
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const { index, error: indexError } = useDocumentIndex(selectedId);
   const demoItems = useDemoItems(selectedId);
-  const [providerChoice, setProviderChoice] = useState<ProviderChoice>({ kind: 'ollama' });
+  const [providerChoice, setProviderChoice] = useState<ProviderChoice>(DEFAULT_PROVIDER_CHOICE);
   const [page, setPage] = useState(1);
   const [highlight, setHighlight] = useState<Bbox | undefined>(undefined);
   const [askState, setAskState] = useState<AskState>({ kind: 'idle' });
@@ -100,13 +142,9 @@ const DemoPage = () => {
       setAskState({ kind: 'asking' });
       showAnswer(await askQuestion({ provider, embedQuery }, index, question));
     } catch (error) {
-      const hint =
-        providerChoice.kind === 'ollama'
-          ? ' Live asking with the local option needs Ollama running on your machine; try a suggested question above, or use the Gemini option with your own key.'
-          : '';
       setAskState({
         kind: 'error',
-        message: error instanceof Error ? `${error.message}.${hint}` : String(error),
+        message: error instanceof Error ? `${error.message}.${buildAskErrorHint(providerChoice)}` : String(error),
       });
     }
   };
@@ -122,24 +160,43 @@ const DemoPage = () => {
   const busy = askState.kind === 'embedding' || askState.kind === 'asking';
 
   return (
-    <div className="grid gap-8 lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]">
-      <div className="flex flex-col gap-5">
-        <DocumentPicker manifest={manifest} selectedId={selectedId} onSelect={handleSelect} />
-        <SuggestedQuestions items={demoItems} onPick={item => showAnswer(item.answer)} />
-        <QuestionForm
-          busy={busy || !index}
-          busyLabel={index ? (BUSY_LABELS[askState.kind] ?? null) : 'Loading the document index...'}
-          onAsk={question => void handleAsk(question)}
-        />
-        <ProviderPicker choice={providerChoice} onChange={setProviderChoice} />
+    <div>
+      <IntroHeader />
 
-        {indexError && <ErrorState message={`Could not load the search index: ${indexError}`} />}
-        {askState.kind === 'error' && <ErrorState message={askState.message} />}
-        {askState.kind === 'answered' && <AnswerCard answer={askState.answer} onCitationClick={handleCitationClick} />}
-        {askState.kind === 'idle' && <EmptyState message={IDLE_HINT} />}
+      <div className="grid gap-8 lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]">
+        <div className="flex flex-col gap-5">
+          <DocumentPicker manifest={manifest} selectedId={selectedId} onSelect={handleSelect} />
+          <SuggestedQuestions items={demoItems} onPick={item => showAnswer(item.answer)} />
+
+          {indexError && <ErrorState message={`Could not load the search index: ${indexError}`} />}
+          {askState.kind === 'error' && <ErrorState message={askState.message} />}
+          {askState.kind === 'answered' && (
+            <AnswerCard answer={askState.answer} onCitationClick={handleCitationClick} />
+          )}
+          {askState.kind === 'idle' && <EmptyState message={IDLE_HINT} />}
+
+          <div className="border-t border-neutral-800 pt-5">
+            <span className="text-xs uppercase tracking-wide text-neutral-500">Or ask your own question</span>
+            <div className="mt-3 flex flex-col gap-3">
+              <QuestionForm
+                busy={busy || !index}
+                busyLabel={index ? (BUSY_LABELS[askState.kind] ?? null) : 'Loading the document index...'}
+                onAsk={question => void handleAsk(question)}
+              />
+              <details className="rounded border border-neutral-800 bg-neutral-900/40">
+                <summary className="cursor-pointer px-3 py-2 text-xs uppercase tracking-wide text-neutral-500 hover:text-neutral-300">
+                  Model settings
+                </summary>
+                <div className="px-3 pb-3">
+                  <ProviderPicker choice={providerChoice} onChange={setProviderChoice} />
+                </div>
+              </details>
+            </div>
+          </div>
+        </div>
+
+        {selectedId && <PdfViewer documentId={selectedId} page={page} highlight={highlight} onPageChange={setPage} />}
       </div>
-
-      {selectedId && <PdfViewer documentId={selectedId} page={page} highlight={highlight} onPageChange={setPage} />}
     </div>
   );
 };
